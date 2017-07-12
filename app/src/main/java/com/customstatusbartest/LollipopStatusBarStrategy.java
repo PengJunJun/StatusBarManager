@@ -15,7 +15,6 @@ import java.lang.ref.WeakReference;
  * <p>
  * use in V21 version, change status bar color
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class LollipopStatusBarStrategy implements IStatusBarStrategy {
     private WeakReference<Activity> mContext;
     private Window mWindow;
@@ -26,6 +25,7 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
         this.mWindow = mContext.get().getWindow();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void translucentStatusBar(boolean fitSystemView) {
         int flag = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
@@ -38,6 +38,7 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void setStatusBarColor(@ColorInt int color, boolean fitSystemView) {
         setStatusBarColor(color);
@@ -47,6 +48,7 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void fullscreenStatusBarColor(@ColorInt int color, boolean fitSystemView) {
         setStatusBarColor(color);
@@ -56,6 +58,7 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setStatusBarColor(@ColorInt int color) {
         if (hasTranslucentBarFlag()) {
             mWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);

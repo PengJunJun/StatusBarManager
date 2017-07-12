@@ -2,7 +2,6 @@ package com.customstatusbartest;
 
 import android.app.Activity;
 import android.support.annotation.ColorInt;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,7 +16,6 @@ import java.lang.ref.WeakReference;
  */
 
 public class KitkatStatusBarStrategy implements IStatusBarStrategy {
-    private static final String TAG = "KitkatStatusBarStrategy";
     private WeakReference<Activity> mContext;
     private Window mWindow;
     private View mStatusBarView;
@@ -36,7 +34,6 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
         }
         if (!mIsTranslucent || mIsFullScreen) {
             removeStatusBarView();
-            setContentViewY(0);
             mIsTranslucent = true;
             mIsFullScreen = false;
         }
@@ -46,7 +43,7 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
     public void setStatusBarColor(@ColorInt int color, boolean fitSystemView) {
         if (mIsTranslucent) {
             addStatusBarView(color);
-            setContentViewY(StatusBarUtils.getStatusBarHeight(mContext.get()));
+            updateContentViewPaddingTop(StatusBarUtils.getStatusBarHeight(mContext.get()));
             mIsTranslucent = false;
         }
     }
@@ -56,8 +53,8 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
         if (mIsTranslucent) {
             addStatusBarView(color);
         } else {
-            setContentViewY(0);
             if (mStatusBarView != null) {
+                updateContentViewPaddingTop(0);
                 mStatusBarView.setBackgroundColor(color);
             }
             mIsTranslucent = true;
@@ -75,7 +72,7 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(StatusBarUtils.getScreenWidth(mContext.get()),
                     StatusBarUtils.getStatusBarHeight(mContext.get()));
             mStatusBarView.setLayoutParams(params);
-            ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView().findViewById(android.R.id.content);
+            ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView();
             viewGroup.addView(mStatusBarView);
         }
         mStatusBarView.setBackgroundColor(color);
@@ -85,14 +82,17 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
         if (mStatusBarView == null) {
             return;
         }
-        ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView().findViewById(android.R.id.content);
+        ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView();
         viewGroup.removeView(mStatusBarView);
+        updateContentViewPaddingTop(0);
         mStatusBarView = null;
     }
 
-    private void setContentViewY(int distance) {
+    private void updateContentViewPaddingTop(int distance) {
         ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView().findViewById(android.R.id.content);
-        View view = viewGroup.getChildAt(0);
-        view.setY(distance);
+        viewGroup.setPadding(viewGroup.getPaddingLeft()
+                , distance
+                , viewGroup.getPaddingRight()
+                , viewGroup.getPaddingBottom());
     }
 }
