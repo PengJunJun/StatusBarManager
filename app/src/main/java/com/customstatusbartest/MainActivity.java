@@ -3,12 +3,14 @@ package com.customstatusbartest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends StatusBarActivity implements View.OnClickListener {
 
     private Button fullscreenButton, redButton, alphaButton;
+    private Toolbar mToolBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -17,6 +19,8 @@ public class MainActivity extends StatusBarActivity implements View.OnClickListe
         redButton = (Button) findViewById(R.id.button1);
         fullscreenButton = (Button) findViewById(R.id.button2);
         alphaButton = (Button) findViewById(R.id.button3);
+        mToolBar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(mToolBar);
         redButton.setOnClickListener(this);
         fullscreenButton.setOnClickListener(this);
         alphaButton.setOnClickListener(this);

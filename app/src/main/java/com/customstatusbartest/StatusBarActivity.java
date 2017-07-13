@@ -3,6 +3,8 @@ package com.customstatusbartest;
 import android.app.Activity;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
 
@@ -33,12 +35,12 @@ public class StatusBarActivity extends AppCompatActivity implements IStatusBarCa
         }
         if (config.isFullscreen()) {
             if (config.getFullscreenColor() != -1) {
-                mStatusBarStrategy.fullscreenStatusBarColor(config.getFullscreenColor(), false);
+                mStatusBarStrategy.fullscreenStatusBarColor(config.getFullscreenColor());
             } else {
-                mStatusBarStrategy.translucentStatusBar(false);
+                mStatusBarStrategy.translucentStatusBar();
             }
             return;
         }
-        mStatusBarStrategy.setStatusBarColor(config.getStatusBarColor(), true);
+        mStatusBarStrategy.setStatusBarColor(config.getStatusBarColor());
     }
 }

@@ -8,9 +8,9 @@ import android.support.annotation.ColorRes;
  */
 
 public interface IStatusBarStrategy {
-    void translucentStatusBar(boolean fitSystemView);
+    void translucentStatusBar();
 
-    void setStatusBarColor(@ColorInt int color, boolean fitSystemView);
+    void setStatusBarColor(@ColorInt int color);
 
-    void fullscreenStatusBarColor(@ColorInt int color, boolean fitSystemView);
+    void fullscreenStatusBarColor(@ColorInt int color);
 }

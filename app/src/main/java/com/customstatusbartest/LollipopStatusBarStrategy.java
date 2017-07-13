@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.RequiresApi;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -16,6 +17,7 @@ import java.lang.ref.WeakReference;
  * use in V21 version, change status bar color
  */
 public class LollipopStatusBarStrategy implements IStatusBarStrategy {
+    private static final String TAG = "LollipopStrategy";
     private WeakReference<Activity> mContext;
     private Window mWindow;
     private boolean mIsTranslucent = true;
@@ -27,39 +29,38 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void translucentStatusBar(boolean fitSystemView) {
-        int flag = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+    public void translucentStatusBar() {
         if (!hasTranslucentBarFlag()) {
-            mWindow.addFlags(flag);
+            mWindow.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         if (!mIsTranslucent) {
-            mWindow.getDecorView().findViewById(android.R.id.content).setY(0);
+            updateContentViewPaddingTop(0);
             mIsTranslucent = true;
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void setStatusBarColor(@ColorInt int color, boolean fitSystemView) {
-        setStatusBarColor(color);
+    public void setStatusBarColor(@ColorInt int color) {
+        setWindowAttribute(color);
         if (mIsTranslucent) {
-            mWindow.getDecorView().findViewById(android.R.id.content).setY(StatusBarUtils.getStatusBarHeight(mContext.get()));
+            updateContentViewPaddingTop(StatusBarUtils.getStatusBarHeight(mContext.get()));
             mIsTranslucent = false;
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void fullscreenStatusBarColor(@ColorInt int color, boolean fitSystemView) {
-        setStatusBarColor(color);
+    public void fullscreenStatusBarColor(@ColorInt int color) {
+        setWindowAttribute(color);
         if (!mIsTranslucent) {
-            mWindow.getDecorView().findViewById(android.R.id.content).setY(0);
+            updateContentViewPaddingTop(0);
             mIsTranslucent = true;
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void setStatusBarColor(@ColorInt int color) {
+    private void setWindowAttribute(@ColorInt int color) {
         if (hasTranslucentBarFlag()) {
             mWindow.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
@@ -70,5 +71,13 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
 
     private boolean hasTranslucentBarFlag() {
         return (mWindow.getAttributes().flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0;
+    }
+
+    private void updateContentViewPaddingTop(int distance) {
+        ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView().findViewById(android.R.id.content);
+        viewGroup.setPadding(viewGroup.getPaddingLeft()
+                , distance
+                , viewGroup.getPaddingRight()
+                , viewGroup.getPaddingBottom());
     }
 }

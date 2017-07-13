@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference;
 
 public class StatusBarManager {
     private static final String TAG = "StatusBarManager";
-    static StatusBarManager mStatusBarManager;
+    static volatile StatusBarManager mStatusBarManager;
     private StatusBarConfig mStatusBarConfig;
     private WeakReference<IStatusBarCallback> mContext;
     private int mStatusBarColor = -1;
