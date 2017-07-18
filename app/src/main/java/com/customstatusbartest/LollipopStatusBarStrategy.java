@@ -53,11 +53,11 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void fullscreenStatusBarColor(@ColorInt int color) {
-//        setWindowAttribute(color);
-//        if (!mIsTranslucent) {
-//        mIsTranslucent = true;
-//        }
-//        updateContentViewPaddingTop(0);
+        setWindowAttribute(color);
+        if (!mIsTranslucent) {
+            updateContentViewPaddingTop(0);
+            mIsTranslucent = true;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

@@ -85,7 +85,7 @@ public class StatusBarConfig {
             return new StatusBarConfig(mStatusBarColor, mIsFullscreen, mFullscreenColor);
         }
 
-        public void init() {
+        public void reset() {
             mFullscreenColor = -1;
             mIsFullscreen = false;
             mStatusBarColor = -1;

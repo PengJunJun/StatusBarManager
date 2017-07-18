@@ -1,5 +1,6 @@
 package com.customstatusbartest;
 
+import android.app.Activity;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -16,7 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class StatusBarFactory {
     private static volatile StatusBarFactory mStatusBarFactory;
-    private ConcurrentHashMap<WeakReference<IStatusBarCallback>, StatusBarManager> mStatusBarHashMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<WeakReference<Activity>, StatusBarManager> mStatusBarHashMap = new ConcurrentHashMap<>();
 
     public static StatusBarFactory getInstance() {
         if (mStatusBarFactory == null) {
@@ -29,8 +30,8 @@ public class StatusBarFactory {
         return mStatusBarFactory;
     }
 
-    public StatusBarManager create(IStatusBarCallback context) {
-        WeakReference<IStatusBarCallback> reference = new WeakReference<>(context);
+    public StatusBarManager create(Activity context) {
+        WeakReference<Activity> reference = new WeakReference<>(context);
         StatusBarManager statusBarManager = containsKey(reference);
         if (statusBarManager == null) {
             statusBarManager = new StatusBarManager(context);
@@ -42,15 +43,15 @@ public class StatusBarFactory {
         return statusBarManager;
     }
 
-    private StatusBarManager containsKey(WeakReference<IStatusBarCallback> reference) {
+    private StatusBarManager containsKey(WeakReference<Activity> reference) {
         if (mStatusBarHashMap.size() == 0
                 || reference == null
                 || reference.get() == null) {
             return null;
         }
-        Set<Map.Entry<WeakReference<IStatusBarCallback>, StatusBarManager>> entries = mStatusBarHashMap.entrySet();
-        Iterator<Map.Entry<WeakReference<IStatusBarCallback>, StatusBarManager>> iterator = entries.iterator();
-        Map.Entry<WeakReference<IStatusBarCallback>, StatusBarManager> element;
+        Set<Map.Entry<WeakReference<Activity>, StatusBarManager>> entries = mStatusBarHashMap.entrySet();
+        Iterator<Map.Entry<WeakReference<Activity>, StatusBarManager>> iterator = entries.iterator();
+        Map.Entry<WeakReference<Activity>, StatusBarManager> element;
         while (iterator.hasNext()) {
             element = iterator.next();
             if (element != null && element.getKey().get() == reference.get()) {
