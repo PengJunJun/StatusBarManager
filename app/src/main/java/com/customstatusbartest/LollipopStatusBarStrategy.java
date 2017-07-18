@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 
 import java.lang.ref.WeakReference;
@@ -25,14 +27,13 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
     public LollipopStatusBarStrategy(WeakReference<Activity> context) {
         this.mContext = context;
         this.mWindow = mContext.get().getWindow();
+        addTranslucentBarFlag();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void translucentStatusBar() {
-        if (!hasTranslucentBarFlag()) {
-            mWindow.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+        addTranslucentBarFlag();
         if (!mIsTranslucent) {
             updateContentViewPaddingTop(0);
             mIsTranslucent = true;
@@ -44,7 +45,7 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
     public void setStatusBarColor(@ColorInt int color) {
         setWindowAttribute(color);
         if (mIsTranslucent) {
-            updateContentViewPaddingTop(StatusBarUtils.getStatusBarHeight(mContext.get()));
+            updateContentViewPaddingTop(1);
             mIsTranslucent = false;
         }
     }
@@ -52,11 +53,11 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void fullscreenStatusBarColor(@ColorInt int color) {
-        setWindowAttribute(color);
-        if (!mIsTranslucent) {
-            updateContentViewPaddingTop(0);
-            mIsTranslucent = true;
-        }
+//        setWindowAttribute(color);
+//        if (!mIsTranslucent) {
+//        mIsTranslucent = true;
+//        }
+//        updateContentViewPaddingTop(0);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -66,15 +67,23 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
         }
         mWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         mWindow.setStatusBarColor(color);
-        mWindow.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     private boolean hasTranslucentBarFlag() {
         return (mWindow.getAttributes().flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0;
     }
 
+    private void addTranslucentBarFlag() {
+        if (!hasTranslucentBarFlag()) {
+            mWindow.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
     private void updateContentViewPaddingTop(int distance) {
         ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView().findViewById(android.R.id.content);
+        if (viewGroup.getPaddingTop() == distance) {
+            return;
+        }
         viewGroup.setPadding(viewGroup.getPaddingLeft()
                 , distance
                 , viewGroup.getPaddingRight()

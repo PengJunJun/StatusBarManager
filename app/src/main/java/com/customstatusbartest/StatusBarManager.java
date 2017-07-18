@@ -3,6 +3,8 @@ package com.customstatusbartest;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by pjj on 2017/6/14.
@@ -12,47 +14,31 @@ import java.lang.ref.WeakReference;
 
 public class StatusBarManager {
     private static final String TAG = "StatusBarManager";
-    static volatile StatusBarManager mStatusBarManager;
-    private StatusBarConfig mStatusBarConfig;
+    private StatusBarConfig.Builder mBuilder;
     private WeakReference<IStatusBarCallback> mContext;
-    private int mStatusBarColor = -1;
-    private boolean mIsFullscreen;
-    private int mFullscreenColor = -1;
 
-    private StatusBarManager(IStatusBarCallback context) {
+    public StatusBarManager(IStatusBarCallback context) {
         this.mContext = new WeakReference<>(context);
+        this.mBuilder = new StatusBarConfig.Builder();
     }
 
     public static StatusBarManager with(IStatusBarCallback context) {
-        if (mStatusBarManager == null) {
-            synchronized (StatusBarManager.class) {
-                if (mStatusBarManager == null) {
-                    mStatusBarManager = new StatusBarManager(context);
-                }
-            }
-        }
-        return mStatusBarManager;
+        return StatusBarFactory.getInstance().create(context);
     }
 
     public StatusBarManager statusBarColor(int color) {
-        this.mStatusBarColor = color;
+        this.mBuilder.statusBarColor(color);
         return this;
     }
 
     public StatusBarManager fullscreen(boolean fullscreen) {
-        this.mIsFullscreen = fullscreen;
+        this.mBuilder.fullscreen(fullscreen);
         return this;
     }
 
     public StatusBarManager fullscreenColor(int color) {
-        this.mFullscreenColor = color;
+        this.mBuilder.fullscreenColor(color);
         return this;
-    }
-
-    private void initStatusBarConfig() {
-        mFullscreenColor = -1;
-        mStatusBarColor = -1;
-        mIsFullscreen = false;
     }
 
     public void apply() {
@@ -60,13 +46,7 @@ public class StatusBarManager {
             Log.e(TAG, "StatusBarManager error, mContext can not null");
             return;
         }
-        if (mStatusBarConfig == null) {
-            mStatusBarConfig = new StatusBarConfig.Builder().build();
-        }
-        mStatusBarConfig.setIsFullscreen(mIsFullscreen);
-        mStatusBarConfig.setStatusBarColor(mStatusBarColor);
-        mStatusBarConfig.setFullscreenColor(mFullscreenColor);
-        mContext.get().onStatusBarConfigChange(mStatusBarConfig);
-        initStatusBarConfig();
+        mContext.get().onStatusBarConfigChange(mBuilder.build());
+        mBuilder.init();
     }
 }

@@ -25,9 +25,7 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
     public KitkatStatusBarStrategy(WeakReference<Activity> context) {
         this.mContext = context;
         this.mWindow = mContext.get().getWindow();
-        if (!hasTranslucentBarFlag()) {
-            mWindow.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+        addTranslucentBarFlag();
     }
 
     @Override
@@ -41,8 +39,8 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
 
     @Override
     public void setStatusBarColor(@ColorInt int color) {
-        if(mIsTranslucent){
-            addStatusBarView(color);
+        addStatusBarView(color);
+        if (mIsTranslucent) {
             updateContentViewPaddingTop(StatusBarUtils.getStatusBarHeight(mContext.get()));
             mIsTranslucent = false;
         }
@@ -64,6 +62,12 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
 
     private boolean hasTranslucentBarFlag() {
         return (mWindow.getAttributes().flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0;
+    }
+
+    private void addTranslucentBarFlag() {
+        if (!hasTranslucentBarFlag()) {
+            mWindow.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
     }
 
     private void addStatusBarView(int color) {
