@@ -19,6 +19,8 @@ public class StatusBarFactory {
     private static volatile StatusBarFactory mStatusBarFactory;
     private ConcurrentHashMap<WeakReference<Activity>, StatusBarManager> mStatusBarHashMap = new ConcurrentHashMap<>();
 
+    private StatusBarFactory(){}
+
     public static StatusBarFactory getInstance() {
         if (mStatusBarFactory == null) {
             synchronized (StatusBarFactory.class) {

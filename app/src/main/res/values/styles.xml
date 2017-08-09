@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/transparent_50</item>
         <item name="colorAccent">@color/transparent_50</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
     </style>
 
 </resources>

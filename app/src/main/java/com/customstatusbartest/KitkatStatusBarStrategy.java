@@ -94,6 +94,9 @@ public class KitkatStatusBarStrategy implements IStatusBarStrategy {
 
     private void updateContentViewPaddingTop(int distance) {
         ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView().findViewById(android.R.id.content);
+        if (viewGroup.getPaddingTop() == distance) {
+            return;
+        }
         viewGroup.setPadding(viewGroup.getPaddingLeft()
                 , distance
                 , viewGroup.getPaddingRight()

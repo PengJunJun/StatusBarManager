@@ -45,7 +45,7 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
     public void setStatusBarColor(@ColorInt int color) {
         setWindowAttribute(color);
         if (mIsTranslucent) {
-            updateContentViewPaddingTop(1);
+            updateContentViewPaddingTop(StatusBarUtils.getStatusBarHeight(mContext.get()));
             mIsTranslucent = false;
         }
     }
@@ -80,13 +80,14 @@ public class LollipopStatusBarStrategy implements IStatusBarStrategy {
     }
 
     private void updateContentViewPaddingTop(int distance) {
-        ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView().findViewById(android.R.id.content);
-        if (viewGroup.getPaddingTop() == distance) {
+        ViewGroup viewGroup = (ViewGroup) mWindow.getDecorView();
+        View view = viewGroup.getChildAt(0);
+        if (view.getPaddingTop() == distance) {
             return;
         }
-        viewGroup.setPadding(viewGroup.getPaddingLeft()
+        view.setPadding(view.getPaddingLeft()
                 , distance
-                , viewGroup.getPaddingRight()
-                , viewGroup.getPaddingBottom());
+                , view.getPaddingRight()
+                , view.getPaddingBottom());
     }
 }
